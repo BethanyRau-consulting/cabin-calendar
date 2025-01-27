@@ -1,76 +1,141 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cabin Time-Share Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="loginPage">
+        <h2>Family Login</h2>
+        <input type="password" id="password" placeholder="Enter Password">
+        <button onclick="checkLogin()">Login</button>
+    </div>
 
-#loginPage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-}
+    <div id="calendarPage" style="display:none;">
+        <h1>Cabin Time-Share Calendar</h1>
+        <div id="calendarControls">
+            <button onclick="prevMonth()">Previous</button>
+            <h2 id="monthName"></h2>
+            <button onclick="nextMonth()">Next</button>
+        </div>
+        <div id="weekDays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tues</div>
+            <div>Wed</div>
+            <div>Thurs</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+        <div id="calendarGrid"></div>
+        
+        <h2>Events</h2>
+        <ul id="eventList"></ul>
 
-input, button {
-    padding: 10px;
-    margin: 10px;
-    border: none;
-    border-radius: 5px;
-}
+        <h2>Journal Entries</h2>
+        <textarea id="journalEntry" placeholder="Write about your time at the cabin..."></textarea>
+        <button onclick="saveJournal()">Save Entry</button>
+        <ul id="journalList"></ul>
 
-button {
-    background-color: #5cb85c;
-    color: white;
-    cursor: pointer;
-}
+        <h2>Photo Uploads</h2>
+        <input type="file" id="photoUpload" accept="image/*">
+        <button onclick="uploadPhoto()">Upload</button>
+        <div id="photoGallery"></div>
+    </div>
 
-#calendarPage {
-    max-width: 800px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-}
-
-#calendarControls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-#calendarGrid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-}
-
-.calendar-day {
-    background: #ddd;
-    padding: 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.calendar-day:hover {
-    background: #5cb85c;
-    color: white;
-}
-
-#eventList, #journalList {
-    list-style: none;
-    padding: 0;
-}
-
-.uploaded-photo {
-    max-width: 100px;
-    border-radius: 5px;
-    margin: 5px;
-}
+    <script>
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        function checkLogin() {
+            var password = document.getElementById("password").value;
+            if (password === "password") {
+                document.getElementById("loginPage").style.display = "none";
+                document.getElementById("calendarPage").style.display = "block";
+                renderCalendar();
+            } else {
+                alert("Incorrect password. Please try again.");
+            }
+        }
+        
+        function renderCalendar() {
+            document.getElementById("monthName").textContent = monthNames[currentMonth] + " " + currentYear;
+            const calendarGrid = document.getElementById("calendarGrid");
+            calendarGrid.innerHTML = "";
+            let firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            for (let i = 0; i < firstDay; i++) {
+                let emptyCell = document.createElement("div");
+                emptyCell.classList.add("empty-cell");
+                calendarGrid.appendChild(emptyCell);
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                let dayElement = document.createElement("div");
+                dayElement.textContent = day;
+                dayElement.classList.add("calendar-day");
+                dayElement.onclick = () => addEvent(day);
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+        
+        function prevMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+        
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        }
+        
+        function addEvent(day) {
+            let eventText = prompt("Enter event details:");
+            if (eventText) {
+                let eventList = document.getElementById("eventList");
+                let listItem = document.createElement("li");
+                listItem.textContent = monthNames[currentMonth] + " " + day + ": " + eventText;
+                eventList.appendChild(listItem);
+            }
+        }
+        
+        function saveJournal() {
+            let entryText = document.getElementById("journalEntry").value;
+            if (entryText) {
+                let journalList = document.getElementById("journalList");
+                let listItem = document.createElement("li");
+                listItem.textContent = entryText;
+                journalList.appendChild(listItem);
+                document.getElementById("journalEntry").value = "";
+            }
+        }
+        
+        function uploadPhoto() {
+            let fileInput = document.getElementById("photoUpload");
+            let file = fileInput.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("uploaded-photo");
+                    document.getElementById("photoGallery").appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>
