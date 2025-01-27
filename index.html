@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cabin Time-Share Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="loginPage">
+        <h2>Family Login</h2>
+        <input type="password" id="password" placeholder="Enter Password">
+        <button onclick="checkLogin()">Login</button>
+    </div>
+
+    <div id="calendarPage" style="display:none;">
+        <h1>Cabin Time-Share Calendar</h1>
+        <div id="calendarControls">
+            <button onclick="prevMonth()">Previous</button>
+            <h2 id="monthName"></h2>
+            <button onclick="nextMonth()">Next</button>
+        </div>
+        <div id="calendarGrid"></div>
+        
+        <h2>Events</h2>
+        <ul id="eventList"></ul>
+
+        <h2>Journal Entries</h2>
+        <textarea id="journalEntry" placeholder="Write about your time at the cabin..."></textarea>
+        <button onclick="saveJournal()">Save Entry</button>
+        <ul id="journalList"></ul>
+
+        <h2>Photo Uploads</h2>
+        <input type="file" id="photoUpload" accept="image/*">
+        <button onclick="uploadPhoto()">Upload</button>
+        <div id="photoGallery"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
