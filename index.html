@@ -36,6 +36,16 @@
         <div id="photoGallery"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        function checkLogin() {
+            var password = document.getElementById("password").value;
+            if (password === "password") {
+                document.getElementById("loginPage").style.display = "none";
+                document.getElementById("calendarPage").style.display = "block";
+            } else {
+                alert("Incorrect password. Please try again.");
+            }
+        }
+    </script>
 </body>
 </html>
