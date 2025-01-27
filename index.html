@@ -37,13 +37,86 @@
     </div>
 
     <script>
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
         function checkLogin() {
             var password = document.getElementById("password").value;
             if (password === "password") {
                 document.getElementById("loginPage").style.display = "none";
                 document.getElementById("calendarPage").style.display = "block";
+                renderCalendar();
             } else {
                 alert("Incorrect password. Please try again.");
+            }
+        }
+        
+        function renderCalendar() {
+            document.getElementById("monthName").textContent = monthNames[currentMonth] + " " + currentYear;
+            const calendarGrid = document.getElementById("calendarGrid");
+            calendarGrid.innerHTML = "";
+            let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                let dayElement = document.createElement("div");
+                dayElement.textContent = day;
+                dayElement.classList.add("calendar-day");
+                dayElement.onclick = () => addEvent(day);
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+        
+        function prevMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+        
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        }
+        
+        function addEvent(day) {
+            let eventText = prompt("Enter event details:");
+            if (eventText) {
+                let eventList = document.getElementById("eventList");
+                let listItem = document.createElement("li");
+                listItem.textContent = monthNames[currentMonth] + " " + day + ": " + eventText;
+                eventList.appendChild(listItem);
+            }
+        }
+        
+        function saveJournal() {
+            let entryText = document.getElementById("journalEntry").value;
+            if (entryText) {
+                let journalList = document.getElementById("journalList");
+                let listItem = document.createElement("li");
+                listItem.textContent = entryText;
+                journalList.appendChild(listItem);
+                document.getElementById("journalEntry").value = "";
+            }
+        }
+        
+        function uploadPhoto() {
+            let fileInput = document.getElementById("photoUpload");
+            let file = fileInput.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("uploaded-photo");
+                    document.getElementById("photoGallery").appendChild(img);
+                };
+                reader.readAsDataURL(file);
             }
         }
     </script>
