@@ -1,124 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cabin Time-Share Calendar</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cabin Time-Share Calendar</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <div id="loginPage">
-        <h2>Family Login</h2>
-        <input type="password" id="password" placeholder="Enter Password">
-        <button onclick="checkLogin()">Login</button>
+  <div id="loginPage">
+    <h2>Family Login</h2>
+    <input type="password" id="password" placeholder="Enter Password" />
+    <button onclick="checkLogin()">Login</button>
+  </div>
+
+  <div id="calendarPage" style="display: none;">
+    <h1>Cabin Time-Share Calendar</h1>
+    <div id="calendarControls">
+      <button onclick="prevMonth()">Previous</button>
+      <h2 id="monthName"></h2>
+      <button onclick="nextMonth()">Next</button>
     </div>
 
-    <div id="calendarPage" style="display:none;">
-        <h1>Cabin Time-Share Calendar</h1>
-        <div id="calendarControls">
-            <button onclick="prevMonth()">Previous</button>
-            <h2 id="monthName"></h2>
-            <button onclick="nextMonth()">Next</button>
-        </div>
-        <div id="calendarGrid"></div>
-        
-        <h2>Events</h2>
-        <ul id="eventList"></ul>
-
-        <h2>Journal Entries</h2>
-        <textarea id="journalEntry" placeholder="Write about your time at the cabin..."></textarea>
-        <button onclick="saveJournal()">Save Entry</button>
-        <ul id="journalList"></ul>
-
-        <h2>Photo Uploads</h2>
-        <input type="file" id="photoUpload" accept="image/*">
-        <button onclick="uploadPhoto()">Upload</button>
-        <div id="photoGallery"></div>
+    <!-- Days of the week row -->
+    <div id="weekDays">
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tues</div>
+      <div>Wed</div>
+      <div>Thurs</div>
+      <div>Fri</div>
+      <div>Sat</div>
     </div>
 
-    <script>
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
-        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        
-        function checkLogin() {
-            var password = document.getElementById("password").value;
-            if (password === "password") {
-                document.getElementById("loginPage").style.display = "none";
-                document.getElementById("calendarPage").style.display = "block";
-                renderCalendar();
-            } else {
-                alert("Incorrect password. Please try again.");
-            }
-        }
-        
-        function renderCalendar() {
-            document.getElementById("monthName").textContent = monthNames[currentMonth] + " " + currentYear;
-            const calendarGrid = document.getElementById("calendarGrid");
-            calendarGrid.innerHTML = "";
-            let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            for (let day = 1; day <= daysInMonth; day++) {
-                let dayElement = document.createElement("div");
-                dayElement.textContent = day;
-                dayElement.classList.add("calendar-day");
-                dayElement.onclick = () => addEvent(day);
-                calendarGrid.appendChild(dayElement);
-            }
-        }
-        
-        function prevMonth() {
-            currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
-            renderCalendar();
-        }
-        
-        function nextMonth() {
-            currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
-            renderCalendar();
-        }
-        
-        function addEvent(day) {
-            let eventText = prompt("Enter event details:");
-            if (eventText) {
-                let eventList = document.getElementById("eventList");
-                let listItem = document.createElement("li");
-                listItem.textContent = monthNames[currentMonth] + " " + day + ": " + eventText;
-                eventList.appendChild(listItem);
-            }
-        }
-        
-        function saveJournal() {
-            let entryText = document.getElementById("journalEntry").value;
-            if (entryText) {
-                let journalList = document.getElementById("journalList");
-                let listItem = document.createElement("li");
-                listItem.textContent = entryText;
-                journalList.appendChild(listItem);
-                document.getElementById("journalEntry").value = "";
-            }
-        }
-        
-        function uploadPhoto() {
-            let fileInput = document.getElementById("photoUpload");
-            let file = fileInput.files[0];
-            if (file) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let img = document.createElement("img");
-                    img.src = e.target.result;
-                    img.classList.add("uploaded-photo");
-                    document.getElementById("photoGallery").appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-    </script>
+    <!-- Main calendar grid -->
+    <div id="calendarGrid"></div>
+
+    <h2>Events</h2>
+    <ul id="eventList"></ul>
+
+    <h2>Journal Entries</h2>
+    <textarea id="journalEntry" placeholder="Write about your time..."></textarea>
+    <button onclick="saveJournal()">Save Entry</button>
+    <ul id="journalList"></ul>
+
+    <h2>Photo Uploads</h2>
+    <input type="file" id="photoUpload" accept="image/*" />
+    <button onclick="uploadPhoto()">Upload</button>
+    <div id="photoGallery"></div>
+  </div>
+
+  <script>
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    function checkLogin() {
+      const password = document.getElementById('password').value;
+      if (password === 'password') {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('calendarPage').style.display = 'block';
+        renderCalendar();
+      } else {
+        alert('Incorrect password. Please try again.');
+      }
+    }
+
+    function renderCalendar() {
+      // Set month name
+      document.getElementById('monthName').textContent =
+        monthNames[currentMonth] + ' ' + currentYear;
+
+      // Clear old calendar
+      const calendarGrid = document.getElementById('calendarGrid');
+      calendarGrid.innerHTML = '';
+
+      // Get first day offset and days in month
+      let firstDay = new Date(currentYear, currentMonth, 1).getDay(); // 0 = Sunday
+      let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+      // Add empty cells before the 1st day
+      for (let i = 0; i < firstDay; i++) {
+        let emptyCell = document.createElement('div');
+        emptyCell.classList.add('empty-cell');
+        calendarGrid.appendChild(emptyCell);
+      }
+
+      // Add days
+      for (let day = 1; day <= daysInMonth; day++) {
+        let dayElement = document.createElement('div');
+        dayElement.textContent = day;
+        dayElement.classList.add('calendar-day');
+        dayElement.onclick = () => addEvent(day);
+        calendarGrid.appendChild(dayElement);
+      }
+    }
+
+    function prevMonth() {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar();
+    }
+
+    function addEvent(day) {
+      let eventText = prompt('Enter event details:');
+      if (eventText) {
+        let eventList = document.getElementById('eventList');
+        let listItem = document.createElement('li');
+        listItem.textContent =
+          monthNames[currentMonth] + ' ' + day + ': ' + eventText;
+        eventList.appendChild(listItem);
+      }
+    }
+
+    function saveJournal() {
+      let entryText = document.getElementById('journalEntry').value;
+      if (entryText) {
+        let journalList = document.getElementById('journalList');
+        let listItem = document.createElement('li');
+        listItem.textContent = entryText;
+        journalList.appendChild(listItem);
+        document.getElementById('journalEntry').value = '';
+      }
+    }
+
+    function uploadPhoto() {
+      let fileInput = document.getElementById('photoUpload');
+      let file = fileInput.files[0];
+      if (file) {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+          let img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('uploaded-photo');
+          document.getElementById('photoGallery').appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
 </body>
 </html>
