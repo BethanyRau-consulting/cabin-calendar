@@ -74,5 +74,25 @@
 
   <!-- Link to the external JavaScript file -->
   <script type="module" src="app.js"></script>
+
+  <div id="addEventModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Add Event</h2>
+    <input type="hidden" id="selectedDay" />
+
+    <label for="eventName">Event Name:</label>
+    <input type="text" id="eventName" />
+
+    <label for="eventTime">Event Time:</label>
+    <input type="text" id="eventTime" placeholder="e.g., 2:00 PM" />
+
+    <label for="eventDesc">Description:</label>
+    <textarea id="eventDesc"></textarea>
+
+    <button id="saveEventBtn">Save Event</button>
+    <button id="cancelEventBtn">Cancel</button>
+  </div>
+</div>
+  
 </body>
 </html>
