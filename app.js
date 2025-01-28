@@ -1,4 +1,3 @@
-// app.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
 import {
   getFirestore,
@@ -18,6 +17,7 @@ import {
  * 1. Firebase Initialization + Anonymous Auth
  ********************************************/
 const firebaseConfig = {
+  // Replace with your actual config from Firebase console
   apiKey: "AIzaSyDC80jrgv7iC7pcgCnUsY3GqL1Nh0y9fEY",
   authDomain: "cabin-calendar-3c52f.firebaseapp.com",
   projectId: "cabin-calendar-3c52f",
@@ -29,7 +29,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Sign in anonymously (if using request.auth != null)
+// Sign in anonymously (if your Firestore rules need request.auth != null)
 const auth = getAuth(app);
 signInAnonymously(auth)
   .then(() => console.log("Signed in anonymously!"))
@@ -96,7 +96,7 @@ function renderCalendar() {
   let firstDay = new Date(currentYear, currentMonth, 1).getDay();
   let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-  // Add empty cells for offset
+  // Add empty cells for offset (if the 1st doesn't fall on Sunday)
   for (let i = 0; i < firstDay; i++) {
     const emptyCell = document.createElement("div");
     emptyCell.classList.add("empty-cell");
@@ -108,7 +108,7 @@ function renderCalendar() {
     const dayElement = document.createElement("div");
     dayElement.textContent = day;
     dayElement.classList.add("calendar-day");
-    dayElement.onclick = () => showAddEventModal(day); // Instead of addEvent
+    dayElement.onclick = () => showAddEventModal(day);
     calendarGrid.appendChild(dayElement);
   }
 }
@@ -147,11 +147,12 @@ function showAddEventModal(day) {
   addEventModal.classList.remove("hidden");
 }
 
+// Close modal on Cancel
 cancelEventBtn.addEventListener("click", () => {
-  // Hide the modal
   addEventModal.classList.add("hidden");
 });
 
+// Save Event to Firestore
 saveEventBtn.addEventListener("click", async () => {
   const eventName = eventNameInput.value.trim();
   const eventTime = eventTimeInput.value.trim();
@@ -173,9 +174,9 @@ saveEventBtn.addEventListener("click", async () => {
       day: parseInt(day, 10),
       timestamp: serverTimestamp()
     });
-    // Hide modal
+    // Hide modal after saving
     addEventModal.classList.add("hidden");
-    // Reload events
+    // Reload events list
     loadEvents();
   } catch (err) {
     console.error("Error saving event:", err);
@@ -189,7 +190,7 @@ async function loadEvents() {
   eventList.innerHTML = "";
 
   try {
-    // Query all events, ordered by timestamp
+    // Query all events, ordered by newest first (timestamp desc)
     const q = query(collection(db, "events"), orderBy("timestamp", "desc"));
     const snapshot = await getDocs(q);
 
@@ -197,8 +198,8 @@ async function loadEvents() {
       const data = doc.data();
       const li = document.createElement("li");
       li.innerHTML = `
-        <strong>${data.name}</strong> 
-        <em>${data.time}</em><br/>
+        <strong>${data.name}</strong>
+        <em style="margin-left:8px;">${data.time}</em><br/>
         <small>${monthNames[data.month]} ${data.day}, ${data.year}</small><br/>
         <p>${data.description}</p>
       `;
