@@ -16,14 +16,13 @@ import {
 /********************************************
  * 1. Firebase Initialization + Anonymous Auth
  ********************************************/
-// Replace with your actual Firebase config from the console
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef12345"
+  apiKey: "AIzaSyDC80jrgv7iC7pcgCnUsY3GqL1Nh0y9fEY",
+  authDomain: "cabin-calendar-3c52f.firebaseapp.com",
+  projectId: "cabin-calendar-3c52f",
+  storageBucket: "cabin-calendar-3c52f.firebasestorage.app",
+  messagingSenderId: "9860592954",
+  appId: "1:9860592954:web:d90fbaaa47e4b4061b4c03"
 };
 
 const app = initializeApp(firebaseConfig);
