@@ -4,21 +4,139 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cabin Time-Share Calendar</title>
-  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Inline CSS for demo (you can move this to styles.css if you want) -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Login page overlay */
+    #loginPage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+    }
+
+    input,
+    button {
+      padding: 10px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #5cb85c;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Calendar container */
+    #calendarPage {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      display: none; /* hidden until login */
+    }
+
+    /* Month controls */
+    #calendarControls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    /* Days of the week header */
+    #weekDays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      background-color: #eaeaea;
+      padding: 5px 0;
+    }
+
+    #weekDays > div {
+      border-right: 1px solid #ccc;
+    }
+
+    #weekDays > div:last-child {
+      border-right: none;
+    }
+
+    /* Calendar grid */
+    #calendarGrid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin-bottom: 20px;
+    }
+
+    .empty-cell {
+      background: transparent;
+    }
+
+    .calendar-day {
+      background: #ddd;
+      padding: 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .calendar-day:hover {
+      background: #5cb85c;
+      color: white;
+    }
+
+    /* Lists */
+    #eventList,
+    #journalList {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      margin: 10px auto;
+      max-width: 600px;
+    }
+
+    /* Photo gallery */
+    .uploaded-photo {
+      max-width: 100px;
+      border-radius: 5px;
+      margin: 5px;
+      display: inline-block;
+    }
+  </style>
 </head>
 <body>
+  <!-- Simple Password Login -->
   <div id="loginPage">
     <h2>Family Login</h2>
     <input type="password" id="password" placeholder="Enter Password" />
-    <button onclick="checkLogin()">Login</button>
+    <button id="loginBtn">Login</button>
   </div>
 
-  <div id="calendarPage" style="display: none;">
+  <!-- Main Calendar Page -->
+  <div id="calendarPage">
     <h1>Cabin Time-Share Calendar</h1>
     <div id="calendarControls">
-      <button onclick="prevMonth()">Previous</button>
+      <button id="prevBtn">Previous</button>
       <h2 id="monthName"></h2>
-      <button onclick="nextMonth()">Next</button>
+      <button id="nextBtn">Next</button>
     </div>
 
     <!-- Days of the week row -->
@@ -40,16 +158,48 @@
 
     <h2>Journal Entries</h2>
     <textarea id="journalEntry" placeholder="Write about your time..."></textarea>
-    <button onclick="saveJournal()">Save Entry</button>
+    <button id="saveJournalBtn">Save Entry</button>
     <ul id="journalList"></ul>
 
     <h2>Photo Uploads</h2>
     <input type="file" id="photoUpload" accept="image/*" />
-    <button onclick="uploadPhoto()">Upload</button>
+    <button id="uploadPhotoBtn">Upload</button>
     <div id="photoGallery"></div>
   </div>
 
-  <script>
+  <!-- 1) Firebase + Your Calendar Logic, all in type=module -->
+  <script type="module">
+    /********************************************
+     * 1. Firebase Initialization
+     ********************************************/
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      serverTimestamp,
+      orderBy,
+      query
+    } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+
+    // Replace these with your actual config from the Firebase console
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    /********************************************
+     * 2. Variables & DOM Elements
+     ********************************************/
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
     const monthNames = [
@@ -57,101 +207,181 @@
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
-    function checkLogin() {
-      const password = document.getElementById('password').value;
-      if (password === 'password') {
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('calendarPage').style.display = 'block';
+    const loginPage      = document.getElementById("loginPage");
+    const loginBtn       = document.getElementById("loginBtn");
+    const calendarPage   = document.getElementById("calendarPage");
+    const monthNameEl    = document.getElementById("monthName");
+    const prevBtn        = document.getElementById("prevBtn");
+    const nextBtn        = document.getElementById("nextBtn");
+    const calendarGrid   = document.getElementById("calendarGrid");
+    const eventList      = document.getElementById("eventList");
+    const journalEntryEl = document.getElementById("journalEntry");
+    const journalList    = document.getElementById("journalList");
+    const saveJournalBtn = document.getElementById("saveJournalBtn");
+    const photoUpload    = document.getElementById("photoUpload");
+    const photoGallery   = document.getElementById("photoGallery");
+    const uploadPhotoBtn = document.getElementById("uploadPhotoBtn");
+
+    /********************************************
+     * 3. Login Logic (Simple Password)
+     ********************************************/
+    loginBtn.addEventListener("click", () => {
+      const enteredPass = document.getElementById("password").value;
+      if (enteredPass === "password") {
+        loginPage.style.display = "none";
+        calendarPage.style.display = "block";
         renderCalendar();
+        loadEvents();   // Load existing events from Firestore
+        loadJournals(); // Load existing journal entries from Firestore
       } else {
-        alert('Incorrect password. Please try again.');
+        alert("Incorrect password. Please try again.");
       }
-    }
+    });
 
+    /********************************************
+     * 4. Calendar Rendering
+     ********************************************/
     function renderCalendar() {
-      // Set month name
-      document.getElementById('monthName').textContent =
-        monthNames[currentMonth] + ' ' + currentYear;
+      monthNameEl.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+      calendarGrid.innerHTML = "";
 
-      // Clear old calendar
-      const calendarGrid = document.getElementById('calendarGrid');
-      calendarGrid.innerHTML = '';
-
-      // Get first day offset and days in month
-      let firstDay = new Date(currentYear, currentMonth, 1).getDay(); // 0 = Sunday
+      // Sunday=0, Monday=1, ...
+      let firstDay = new Date(currentYear, currentMonth, 1).getDay();
       let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-      // Add empty cells before the 1st day
+      // Add empty cells for offset
       for (let i = 0; i < firstDay; i++) {
-        let emptyCell = document.createElement('div');
-        emptyCell.classList.add('empty-cell');
+        const emptyCell = document.createElement("div");
+        emptyCell.classList.add("empty-cell");
         calendarGrid.appendChild(emptyCell);
       }
 
-      // Add days
+      // Create day cells
       for (let day = 1; day <= daysInMonth; day++) {
-        let dayElement = document.createElement('div');
+        const dayElement = document.createElement("div");
         dayElement.textContent = day;
-        dayElement.classList.add('calendar-day');
+        dayElement.classList.add("calendar-day");
         dayElement.onclick = () => addEvent(day);
         calendarGrid.appendChild(dayElement);
       }
     }
 
-    function prevMonth() {
+    // Month navigation
+    prevBtn.addEventListener("click", () => {
       currentMonth--;
       if (currentMonth < 0) {
         currentMonth = 11;
         currentYear--;
       }
       renderCalendar();
-    }
+    });
 
-    function nextMonth() {
+    nextBtn.addEventListener("click", () => {
       currentMonth++;
       if (currentMonth > 11) {
         currentMonth = 0;
         currentYear++;
       }
       renderCalendar();
-    }
+    });
 
-    function addEvent(day) {
-      let eventText = prompt('Enter event details:');
-      if (eventText) {
-        let eventList = document.getElementById('eventList');
-        let listItem = document.createElement('li');
-        listItem.textContent =
-          monthNames[currentMonth] + ' ' + day + ': ' + eventText;
-        eventList.appendChild(listItem);
+    /********************************************
+     * 5. Firestore: Events
+     ********************************************/
+    async function addEvent(day) {
+      const eventText = prompt("Enter event details:");
+      if (!eventText) return;
+
+      try {
+        // Save event to Firestore
+        await addDoc(collection(db, "cabinEvents"), {
+          text: eventText,
+          year: currentYear,
+          month: currentMonth,
+          day: day,
+          timestamp: serverTimestamp()
+        });
+        // Reload events
+        loadEvents();
+      } catch (err) {
+        console.error("Error adding event:", err);
       }
     }
 
-    function saveJournal() {
-      let entryText = document.getElementById('journalEntry').value;
-      if (entryText) {
-        let journalList = document.getElementById('journalList');
-        let listItem = document.createElement('li');
-        listItem.textContent = entryText;
-        journalList.appendChild(listItem);
-        document.getElementById('journalEntry').value = '';
+    async function loadEvents() {
+      eventList.innerHTML = "";
+
+      try {
+        // Query all cabinEvents, ordered by timestamp or year/month/day
+        const q = query(collection(db, "cabinEvents"), orderBy("timestamp", "desc"));
+        const snapshot = await getDocs(q);
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const li = document.createElement("li");
+          li.textContent = `${monthNames[data.month]} ${data.day}, ${data.year}: ${data.text}`;
+          eventList.appendChild(li);
+        });
+      } catch (err) {
+        console.error("Error loading events:", err);
       }
     }
 
-    function uploadPhoto() {
-      let fileInput = document.getElementById('photoUpload');
-      let file = fileInput.files[0];
-      if (file) {
-        let reader = new FileReader();
-        reader.onload = function (e) {
-          let img = document.createElement('img');
-          img.src = e.target.result;
-          img.classList.add('uploaded-photo');
-          document.getElementById('photoGallery').appendChild(img);
-        };
-        reader.readAsDataURL(file);
+    /********************************************
+     * 6. Firestore: Journal Entries
+     ********************************************/
+    saveJournalBtn.addEventListener("click", async () => {
+      const entryText = journalEntryEl.value.trim();
+      if (!entryText) return;
+      try {
+        // Save journal to Firestore
+        await addDoc(collection(db, "cabinJournals"), {
+          text: entryText,
+          timestamp: serverTimestamp()
+        });
+        // Clear the textarea
+        journalEntryEl.value = "";
+        // Reload journal entries
+        loadJournals();
+      } catch (err) {
+        console.error("Error saving journal:", err);
+      }
+    });
+
+    async function loadJournals() {
+      journalList.innerHTML = "";
+
+      try {
+        // Query all cabinJournals, ordered by timestamp (newest first or oldest first)
+        const q = query(collection(db, "cabinJournals"), orderBy("timestamp", "desc"));
+        const snapshot = await getDocs(q);
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const li = document.createElement("li");
+          li.textContent = data.text;
+          journalList.appendChild(li);
+        });
+      } catch (err) {
+        console.error("Error loading journals:", err);
       }
     }
+
+    /********************************************
+     * 7. Photo Upload (Local Browser Display)
+     ********************************************/
+    uploadPhotoBtn.addEventListener("click", () => {
+      const file = photoUpload.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        let img = document.createElement("img");
+        img.src = e.target.result;
+        img.classList.add("uploaded-photo");
+        photoGallery.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
   </script>
 </body>
 </html>
