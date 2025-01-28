@@ -4,123 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cabin Time-Share Calendar</title>
-
-  <!-- Inline CSS for demo (you can move this to styles.css if you want) -->
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-
-    /* Login page overlay */
-    #loginPage {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.6);
-      color: white;
-    }
-
-    input,
-    button {
-      padding: 10px;
-      margin: 10px;
-      border: none;
-      border-radius: 5px;
-    }
-
-    button {
-      background-color: #5cb85c;
-      color: white;
-      cursor: pointer;
-    }
-
-    /* Calendar container */
-    #calendarPage {
-      max-width: 800px;
-      margin: 40px auto;
-      background: white;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
-      display: none; /* hidden until login */
-    }
-
-    /* Month controls */
-    #calendarControls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    /* Days of the week header */
-    #weekDays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      font-weight: bold;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      background-color: #eaeaea;
-      padding: 5px 0;
-    }
-
-    #weekDays > div {
-      border-right: 1px solid #ccc;
-    }
-
-    #weekDays > div:last-child {
-      border-right: none;
-    }
-
-    /* Calendar grid */
-    #calendarGrid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-      margin-bottom: 20px;
-    }
-
-    .empty-cell {
-      background: transparent;
-    }
-
-    .calendar-day {
-      background: #ddd;
-      padding: 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .calendar-day:hover {
-      background: #5cb85c;
-      color: white;
-    }
-
-    /* Lists */
-    #eventList,
-    #journalList {
-      list-style: none;
-      padding: 0;
-      text-align: left;
-      margin: 10px auto;
-      max-width: 600px;
-    }
-
-    /* Photo gallery */
-    .uploaded-photo {
-      max-width: 100px;
-      border-radius: 5px;
-      margin: 5px;
-      display: inline-block;
-    }
-  </style>
+  <!-- Link to external CSS file -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <!-- Simple Password Login -->
@@ -231,8 +116,8 @@
         loginPage.style.display = "none";
         calendarPage.style.display = "block";
         renderCalendar();
-        loadEvents();   // Load existing events from Firestore
-        loadJournals(); // Load existing journal entries from Firestore
+        loadEvents();       // Load existing events from Firestore
+        loadJournalEntries(); // Load existing journal entries
       } else {
         alert("Incorrect password. Please try again.");
       }
@@ -293,8 +178,8 @@
       if (!eventText) return;
 
       try {
-        // Save event to Firestore
-        await addDoc(collection(db, "cabinEvents"), {
+        // Save event to Firestore (using 'events' collection)
+        await addDoc(collection(db, "events"), {
           text: eventText,
           year: currentYear,
           month: currentMonth,
@@ -312,8 +197,8 @@
       eventList.innerHTML = "";
 
       try {
-        // Query all cabinEvents, ordered by timestamp or year/month/day
-        const q = query(collection(db, "cabinEvents"), orderBy("timestamp", "desc"));
+        // Query all events, ordered by timestamp
+        const q = query(collection(db, "events"), orderBy("timestamp", "desc"));
         const snapshot = await getDocs(q);
 
         snapshot.forEach(doc => {
@@ -334,26 +219,26 @@
       const entryText = journalEntryEl.value.trim();
       if (!entryText) return;
       try {
-        // Save journal to Firestore
-        await addDoc(collection(db, "cabinJournals"), {
+        // Save journal to Firestore (using 'journalEntries' collection)
+        await addDoc(collection(db, "journalEntries"), {
           text: entryText,
           timestamp: serverTimestamp()
         });
         // Clear the textarea
         journalEntryEl.value = "";
         // Reload journal entries
-        loadJournals();
+        loadJournalEntries();
       } catch (err) {
         console.error("Error saving journal:", err);
       }
     });
 
-    async function loadJournals() {
+    async function loadJournalEntries() {
       journalList.innerHTML = "";
 
       try {
-        // Query all cabinJournals, ordered by timestamp (newest first or oldest first)
-        const q = query(collection(db, "cabinJournals"), orderBy("timestamp", "desc"));
+        // Query all journalEntries, ordered by timestamp (newest first)
+        const q = query(collection(db, "journalEntries"), orderBy("timestamp", "desc"));
         const snapshot = await getDocs(q);
 
         snapshot.forEach(doc => {
@@ -363,7 +248,7 @@
           journalList.appendChild(li);
         });
       } catch (err) {
-        console.error("Error loading journals:", err);
+        console.error("Error loading journal entries:", err);
       }
     }
 
