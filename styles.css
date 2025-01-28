@@ -1,3 +1,131 @@
+/* --------------------------
+   Global & Basic Elements
+-------------------------- */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+input,
+button {
+  padding: 10px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+button {
+  background-color: #5cb85c;
+  color: white;
+  cursor: pointer;
+}
+
+/* --------------------------
+   Login Page
+-------------------------- */
+#loginPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+}
+
+/* --------------------------
+   Calendar Container
+-------------------------- */
+#calendarPage {
+  max-width: 800px;
+  margin: 40px auto;
+  background: white;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  display: none; /* hidden until login */
+}
+
+/* Month controls */
+#calendarControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Days of the week header */
+#weekDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  background-color: #eaeaea;
+  padding: 5px 0;
+}
+
+#weekDays > div {
+  border-right: 1px solid #ccc;
+}
+
+#weekDays > div:last-child {
+  border-right: none;
+}
+
+/* Calendar grid */
+#calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.empty-cell {
+  background: transparent;
+}
+
+.calendar-day {
+  background: #ddd;
+  padding: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.calendar-day:hover {
+  background: #5cb85c;
+  color: white;
+}
+
+/* --------------------------
+   Events & Journal Lists
+-------------------------- */
+#eventList,
+#journalList {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+  margin: 10px auto;
+  max-width: 600px;
+}
+
+/* --------------------------
+   Photo Gallery
+-------------------------- */
+.uploaded-photo {
+  max-width: 100px;
+  border-radius: 5px;
+  margin: 5px;
+  display: inline-block;
+}
+
+/* --------------------------
+   Modal & Hidden Class
+-------------------------- */
 /* Hide elements with .hidden class */
 .hidden {
   display: none !important;
@@ -36,7 +164,7 @@
   margin-top: 10px;
 }
 
-.modal-content input[type=\"text\"],
+.modal-content input[type="text"],
 .modal-content textarea {
   width: 100%;
   margin: 5px 0;
