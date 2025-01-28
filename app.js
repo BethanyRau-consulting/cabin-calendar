@@ -16,20 +16,20 @@ import {
 /********************************************
  * 1. Firebase Initialization + Anonymous Auth
  ********************************************/
+// Replace with your actual Firebase config from the console
 const firebaseConfig = {
-  // Replace with your actual config from Firebase console
-  apiKey: "AIzaSyDC80jrgv7iC7pcgCnUsY3GqL1Nh0y9fEY",
-  authDomain: "cabin-calendar-3c52f.firebaseapp.com",
-  projectId: "cabin-calendar-3c52f",
-  storageBucket: "cabin-calendar-3c52f.firebasestorage.app",
-  messagingSenderId: "9860592954",
-  appId: "1:9860592954:web:d90fbaaa47e4b4061b4c03"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef12345"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Sign in anonymously (if your Firestore rules need request.auth != null)
+// If your Firestore rules require request.auth != null:
 const auth = getAuth(app);
 signInAnonymously(auth)
   .then(() => console.log("Signed in anonymously!"))
@@ -45,7 +45,7 @@ const monthNames = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-// Elements
+// HTML elements
 const loginPage      = document.getElementById("loginPage");
 const loginBtn       = document.getElementById("loginBtn");
 const calendarPage   = document.getElementById("calendarPage");
@@ -60,15 +60,6 @@ const saveJournalBtn = document.getElementById("saveJournalBtn");
 const photoUpload    = document.getElementById("photoUpload");
 const photoGallery   = document.getElementById("photoGallery");
 const uploadPhotoBtn = document.getElementById("uploadPhotoBtn");
-
-// Modal elements
-const addEventModal      = document.getElementById("addEventModal");
-const selectedDayInput   = document.getElementById("selectedDay");
-const eventNameInput     = document.getElementById("eventName");
-const eventTimeInput     = document.getElementById("eventTime");
-const eventDescInput     = document.getElementById("eventDesc");
-const saveEventBtn       = document.getElementById("saveEventBtn");
-const cancelEventBtn     = document.getElementById("cancelEventBtn");
 
 /********************************************
  * 3. Login Logic (Simple Password)
@@ -96,7 +87,7 @@ function renderCalendar() {
   let firstDay = new Date(currentYear, currentMonth, 1).getDay();
   let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-  // Add empty cells for offset (if the 1st doesn't fall on Sunday)
+  // Add empty cells for offset
   for (let i = 0; i < firstDay; i++) {
     const emptyCell = document.createElement("div");
     emptyCell.classList.add("empty-cell");
@@ -108,7 +99,7 @@ function renderCalendar() {
     const dayElement = document.createElement("div");
     dayElement.textContent = day;
     dayElement.classList.add("calendar-day");
-    dayElement.onclick = () => showAddEventModal(day);
+    dayElement.onclick = () => addEvent(day); // Use multiple prompts
     calendarGrid.appendChild(dayElement);
   }
 }
@@ -133,36 +124,17 @@ nextBtn.addEventListener("click", () => {
 });
 
 /********************************************
- * 5. Show Modal, Save Event
+ * 5. Firestore: Add Event (Multiple Prompts)
  ********************************************/
-function showAddEventModal(day) {
-  // Clear any previous input
-  eventNameInput.value = "";
-  eventTimeInput.value = "";
-  eventDescInput.value = "";
-  // Store the clicked day
-  selectedDayInput.value = day;
+async function addEvent(day) {
+  const eventName = prompt("Enter the event name:");
+  if (!eventName) return; // Cancel if user hits Esc or doesn't enter a name
 
-  // Show the modal
-  addEventModal.classList.remove("hidden");
-}
+  const eventTime = prompt("Enter the event time (e.g., 2:00 PM):");
+  if (!eventTime) return;
 
-// Close modal on Cancel
-cancelEventBtn.addEventListener("click", () => {
-  addEventModal.classList.add("hidden");
-});
-
-// Save Event to Firestore
-saveEventBtn.addEventListener("click", async () => {
-  const eventName = eventNameInput.value.trim();
-  const eventTime = eventTimeInput.value.trim();
-  const eventDesc = eventDescInput.value.trim();
-  const day = selectedDayInput.value;
-
-  if (!eventName || !eventTime || !eventDesc || !day) {
-    alert("Please fill in all fields!");
-    return;
-  }
+  const eventDesc = prompt("Enter a short description of the event:");
+  if (!eventDesc) return;
 
   try {
     await addDoc(collection(db, "events"), {
@@ -171,26 +143,23 @@ saveEventBtn.addEventListener("click", async () => {
       description: eventDesc,
       year: currentYear,
       month: currentMonth,
-      day: parseInt(day, 10),
+      day: day,
       timestamp: serverTimestamp()
     });
-    // Hide modal after saving
-    addEventModal.classList.add("hidden");
-    // Reload events list
-    loadEvents();
+    loadEvents(); // Refresh the list after adding
   } catch (err) {
-    console.error("Error saving event:", err);
+    console.error("Error adding event:", err);
   }
-});
+}
 
 /********************************************
- * 6. Firestore: Events
+ * 6. Firestore: Load Events
  ********************************************/
 async function loadEvents() {
   eventList.innerHTML = "";
 
   try {
-    // Query all events, ordered by newest first (timestamp desc)
+    // Query all events, ordered by newest first
     const q = query(collection(db, "events"), orderBy("timestamp", "desc"));
     const snapshot = await getDocs(q);
 
@@ -198,7 +167,7 @@ async function loadEvents() {
       const data = doc.data();
       const li = document.createElement("li");
       li.innerHTML = `
-        <strong>${data.name}</strong>
+        <strong>${data.name}</strong> 
         <em style="margin-left:8px;">${data.time}</em><br/>
         <small>${monthNames[data.month]} ${data.day}, ${data.year}</small><br/>
         <p>${data.description}</p>
