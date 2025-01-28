@@ -55,7 +55,7 @@
   <!-- 1) Firebase + Your Calendar Logic, all in type=module -->
   <script type="module">
     /********************************************
-     * 1. Firebase Initialization
+     * 1. Firebase Initialization + Anonymous Auth
      ********************************************/
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
     import {
@@ -67,20 +67,29 @@
       orderBy,
       query
     } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+    import {
+      getAuth,
+      signInAnonymously
+    } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
 
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDC80jrgv7iC7pcgCnUsY3GqL1Nh0y9fEY",
-  authDomain: "cabin-calendar-3c52f.firebaseapp.com",
-  projectId: "cabin-calendar-3c52f",
-  storageBucket: "cabin-calendar-3c52f.firebasestorage.app",
-  messagingSenderId: "9860592954",
-  appId: "1:9860592954:web:d90fbaaa47e4b4061b4c03"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyDC80jrgv7iC7pcgCnUsY3GqL1Nh0y9fEY",
+      authDomain: "cabin-calendar-3c52f.firebaseapp.com",
+      projectId: "cabin-calendar-3c52f",
+      storageBucket: "cabin-calendar-3c52f.firebasestorage.app",
+      messagingSenderId: "9860592954",
+      appId: "1:9860592954:web:d90fbaaa47e4b4061b4c03"
+    };
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // Sign in anonymously
+    const auth = getAuth(app);
+    signInAnonymously(auth)
+      .then(() => console.log("Signed in anonymously!"))
+      .catch(err => console.error("Error signing in anonymously:", err));
 
     /********************************************
      * 2. Variables & DOM Elements
@@ -116,7 +125,7 @@ const firebaseConfig = {
         loginPage.style.display = "none";
         calendarPage.style.display = "block";
         renderCalendar();
-        loadEvents();       // Load existing events from Firestore
+        loadEvents();        // Load existing events from Firestore
         loadJournalEntries(); // Load existing journal entries
       } else {
         alert("Incorrect password. Please try again.");
