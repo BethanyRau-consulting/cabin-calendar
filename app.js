@@ -181,38 +181,60 @@ async function loadEvents() {
 /********************************************
  * 7. Firestore: Journal Entries
  ********************************************/
+// Instead of just reading from the textarea, we'll prompt for three fields:
 saveJournalBtn.addEventListener("click", async () => {
-  const entryText = journalEntryEl.value.trim();
-  if (!entryText) return;
+  // 1) Prompt for name
+  const userName = prompt("Enter your name:");
+  if (!userName) return;
+
+  // 2) Prompt for date of visit
+  const dateOfVisit = prompt("Enter the date of your visit (e.g., 2025-02-01):");
+  if (!dateOfVisit) return;
+
+  // 3) Prompt for journal text
+  const journalText = prompt("Enter your journal entry:");
+  if (!journalText) return;
+
   try {
+    // Save to Firestore (assuming your collection is "journalEntries")
     await addDoc(collection(db, "journalEntries"), {
-      text: entryText,
+      name: userName,
+      visitDate: dateOfVisit,
+      text: journalText,
       timestamp: serverTimestamp()
     });
-    journalEntryEl.value = "";
+    // Reload
     loadJournalEntries();
   } catch (err) {
     console.error("Error saving journal:", err);
   }
 });
 
+// We'll display them using loadJournalEntries() below
 async function loadJournalEntries() {
   journalList.innerHTML = "";
 
   try {
+    // Query all, ordered by timestamp
     const q = query(collection(db, "journalEntries"), orderBy("timestamp", "desc"));
     const snapshot = await getDocs(q);
 
     snapshot.forEach(doc => {
       const data = doc.data();
       const li = document.createElement("li");
-      li.textContent = data.text;
+      // Display name, date, text
+      li.innerHTML = `
+        <strong>${data.name || "Unknown"}</strong>
+        <em style="margin-left:8px;">${data.visitDate || "No date"}</em><br/>
+        <p>${data.text}</p>
+      `;
       journalList.appendChild(li);
     });
   } catch (err) {
     console.error("Error loading journal entries:", err);
   }
 }
+
 
 /********************************************
  * 8. Photo Upload (Local Browser Display)
