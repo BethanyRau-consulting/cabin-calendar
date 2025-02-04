@@ -1,51 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cabin Time-Share Calendar</title>
-  <!-- Link to external CSS file -->
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <!-- Simple Password Login -->
-  <div id="loginPage">
-    <h2>Family Login</h2>
-    <input type="password" id="password" placeholder="Enter Password" />
-    <button id="loginBtn">Login</button>
-  </div>
-
-  <!-- Main Calendar Page -->
-  <div id="calendarPage">
-    <h1>Cabin Time-Share Calendar</h1>
-    <div id="calendarControls">
-      <button id="prevBtn">Previous</button>
-      <h2 id="monthName"></h2>
-      <button id="nextBtn">Next</button>
-    </div>
-
-    <!-- Days of the week row -->
-    <div id="weekDays">
-      <div>Sun</div>
-      <div>Mon</div>
-      <div>Tues</div>
-      <div>Wed</div>
-      <div>Thurs</div>
-      <div>Fri</div>
-      <div>Sat</div>
-    </div>
-
-    <!-- Main calendar grid -->
-    <div id="calendarGrid"></div>
-
-    <h2>Events</h2>
-    <ul id="eventList"></ul>
-
-    <!-- MODAL for adding an Event -->
+<!-- Inside the event modal -->
 <div id="addEventModal" class="modal hidden">
   <div class="modal-content">
     <h2>Add Event</h2>
     
+    <label for="selectedDay">Date:</label>
+    <input type="text" id="selectedDay" disabled />
+
     <label for="eventName">Event Name:</label>
     <input type="text" id="eventName" />
 
@@ -71,18 +31,19 @@
   </div>
 </div>
 
-    <h2>Journal Entries</h2>
-    <button id="saveJournalBtn">Add Entry</button>
-    <ul id="journalList"></ul>
+<!-- Phone Number Input -->
+<h2>Notifications</h2>
+<label for="phoneNumber">Enter your phone number:</label>
+<input type="tel" id="phoneNumber" placeholder="e.g., +1234567890" />
+<button id="savePhoneBtn">Save</button>
 
-    <!--
-    <h2>Photo Uploads</h2>
-    <input type="file" id="photoUpload" accept="image/*" />
-    <button id="uploadPhotoBtn">Upload</button>
-    <div id="photoGallery"></div>
-  </div>
--->
-  <!-- Link to the external JavaScript file -->
-  <script type="module" src="app.js"></script>
-</body>
-</html>
+<!-- Journal Entries -->
+<h2>Journal Entries</h2>
+<button id="saveJournalBtn">Add Entry</button>
+<ul id="journalList"></ul>
+
+<!-- Photo Upload Placeholder -->
+<h2>Photo Upload</h2>
+<input type="file" id="photoUpload" accept="image/*" />
+<button id="uploadPhotoBtn">Upload</button>
+<div id="photoGallery"></div>
