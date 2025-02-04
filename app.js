@@ -172,24 +172,24 @@ saveEventBtn.addEventListener("click", async () => {
  * 6. Firestore: Load Events
  ********************************************/
 async function loadEvents() {
-  eventList.innerHTML = "";
-
   try {
-    // Query all events, ordered by newest first
     const q = query(collection(db, "events"), orderBy("timestamp", "desc"));
     const snapshot = await getDocs(q);
+    
+    const eventsByDate = {}; // Organize events by date
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <strong>${data.name}</strong> 
-        <em style="margin-left:8px;">${data.time}</em><br/>
-        <small>${monthNames[data.month]} ${data.day}, ${data.year}</small><br/>
-        <p>${data.description}</p>
-      `;
-      eventList.appendChild(li);
+      const key = `${data.year}-${data.month}-${data.day}`;
+
+      if (!eventsByDate[key]) {
+        eventsByDate[key] = [];
+      }
+
+      eventsByDate[key].push(data);
     });
+
+    renderCalendar(eventsByDate);
   } catch (err) {
     console.error("Error loading events:", err);
   }
