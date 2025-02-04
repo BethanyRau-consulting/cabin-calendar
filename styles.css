@@ -1,109 +1,37 @@
-/* --------------------------
-   Global & Basic Elements
--------------------------- */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-}
-
-input,
-button {
+/* Phone Number Input */
+#phoneNumber {
   padding: 10px;
   margin: 10px;
-  border: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+}
+
+/* Style for event items */
+.event-item {
+  padding: 5px;
+  margin: 5px 0;
+  font-size: 14px;
+  color: white;
+  text-align: center;
   border-radius: 5px;
 }
 
-button {
-  background-color: #5cb85c;
-  color: white;
-  cursor: pointer;
-}
-
-/* --------------------------
-   Login Page Overlay
--------------------------- */
-#loginPage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-}
-
-/* --------------------------
-   Calendar Container
--------------------------- */
-#calendarPage {
-  max-width: 800px;
-  margin: 40px auto;
-  background: white;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  display: none; /* hidden until login */
-}
-
-/* Month controls */
-#calendarControls {
+/* Buttons for editing/deleting events */
+.event-controls {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
 }
 
-/* Days of the week header */
-#weekDays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  font-weight: bold;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  background-color: #eaeaea;
-  padding: 5px 0;
-}
-
-#weekDays > div {
-  border-right: 1px solid #ccc;
-}
-#weekDays > div:last-child {
-  border-right: none;
-}
-
-/* Calendar grid */
-#calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  margin-bottom: 20px;
-}
-
-.empty-cell {
-  background: transparent;
-}
-
-.calendar-day {
-  background: #ddd;
-  padding: 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.calendar-day:hover {
-  background: #5cb85c;
+.event-controls button {
+  background-color: red;
   color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
 }
 
-/* --------------------------
-   Events & Journal Lists
--------------------------- */
-#eventList,
+/* Journal Entries */
 #journalList {
   list-style: none;
   padding: 0;
@@ -112,77 +40,18 @@ button {
   max-width: 600px;
 }
 
-/* --------------------------
-   Event Color Styles
----------------------------- */
-.event-item {
-  padding: 4px;
-  margin: 2px 0;
-  font-size: 12px;
-  color: white;
-  text-align: center;
-  border-radius: 5px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.event-item.green { background-color: green; }
-.event-item.yellow { background-color: yellow; color: black; }
-.event-item.red { background-color: red; }
-.event-item.orange { background-color: orange; }
-.event-item.blue { background-color: blue; }
-.event-item.purple { background-color: purple; }
-
-/* Hide modal by default */
-.hidden {
-  display: none !important;
-}
-
-/* Modal overlay */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Modal box */
-.modal-content {
-  background: #fff;
-  padding: 20px;
-  width: 300px;
-  max-width: 80%;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  position: relative;
-}
-
-/* Style buttons */
-.modal-content button {
-  margin-top: 10px;
+#journalList li {
+  background: #f9f9f9;
   padding: 10px;
-  border: none;
-  cursor: pointer;
+  margin: 5px 0;
+  border-left: 5px solid #5cb85c;
 }
 
-.modal-content button:first-child {
-  background: green;
-  color: white;
+/* Photo Gallery */
+#photoGallery {
+  display: flex;
+  flex-wrap: wrap;
 }
-
-.modal-content button:last-child {
-  background: red;
-  color: white;
-}
-
-/* --------------------------
-   Photo Gallery
 
 .uploaded-photo {
   max-width: 100px;
@@ -190,4 +59,3 @@ button {
   margin: 5px;
   display: inline-block;
 }
--------------------------- */
