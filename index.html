@@ -1,55 +1,85 @@
-<link rel="stylesheet" href="styles.css" />
-
-
-<!-- Inside the event modal -->
-<div id="addEventModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Add Event</h2>
-    
-    <label for="selectedDay">Date:</label>
-    <input type="text" id="selectedDay" disabled />
-
-    <label for="eventName">Event Name:</label>
-    <input type="text" id="eventName" />
-
-    <label for="eventTime">Event Time:</label>
-    <input type="text" id="eventTime" placeholder="e.g., 2:00 PM" />
-
-    <label for="eventDesc">Description:</label>
-    <textarea id="eventDesc"></textarea>
-
-    <label for="eventType">Event Type:</label>
-    <select id="eventType">
-      <option value="Open">Open</option>
-      <option value="Family Time">Family Time</option>
-      <option value="Family Time but open to visitors">Family Time but open to visitors</option>
-      <option value="Golf Weekend">Golf Weekend</option>
-      <option value="Hunting">Hunting</option>
-      <option value="Work Weekend">Work Weekend</option>
-      <option value="Trout Weekend">Trout Weekend</option>
-    </select>
-
-    <button id="saveEventBtn">Save Event</button>
-    <button id="cancelEventBtn">Cancel</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cabin Time-Share Calendar</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Simple Password Login -->
+  <div id="loginPage">
+    <h2>Family Login</h2>
+    <input type="password" id="password" placeholder="Enter Password" />
+    <button id="loginBtn">Login</button>
   </div>
-</div>
 
-<!-- Phone Number Input --> 
-<h2>Notifications</h2>
-<label for="phoneNumber">Enter your phone number:</label>
-<input type="tel" id="phoneNumber" placeholder="e.g., +1234567890" />
-<button id="savePhoneBtn">Save</button>
+  <!-- Main Calendar Page -->
+  <div id="calendarPage">
+    <h1>Cabin Time-Share Calendar</h1>
+    <div id="calendarControls">
+      <button id="prevBtn">Previous</button>
+      <h2 id="monthName"></h2>
+      <button id="nextBtn">Next</button>
+    </div>
 
-<!-- Journal Entries -->
-<h2>Journal Entries</h2>
-<button id="saveJournalBtn">Add Entry</button>
-<ul id="journalList"></ul>
+    <div id="weekDays">
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tues</div>
+      <div>Wed</div>
+      <div>Thurs</div>
+      <div>Fri</div>
+      <div>Sat</div>
+    </div>
 
-<!-- Photo Upload Placeholder -->
-<h2>Photo Upload</h2>
-<input type="file" id="photoUpload" accept="image/*" />
-<button id="uploadPhotoBtn">Upload</button>
-<div id="photoGallery"></div>
+    <div id="calendarGrid"></div>
 
-<script type="module" src="app.js"></script>
+    <h2>Events</h2>
+    <ul id="eventList"></ul>
 
+    <!-- Modal for Adding an Event -->
+    <div id="addEventModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Add Event</h2>
+        <label for="selectedDay">Date:</label>
+        <input type="text" id="selectedDay" disabled />
+
+        <label for="eventName">Event Name:</label>
+        <input type="text" id="eventName" />
+
+        <label for="eventTime">Event Time:</label>
+        <input type="text" id="eventTime" placeholder="e.g., 2:00 PM" />
+
+        <label for="eventDesc">Description:</label>
+        <textarea id="eventDesc"></textarea>
+
+        <label for="eventType">Event Type:</label>
+        <select id="eventType">
+          <option value="Open">Open</option>
+          <option value="Family Time">Family Time</option>
+          <option value="Family Time but open to visitors">Family Time but open to visitors</option>
+          <option value="Golf Weekend">Golf Weekend</option>
+          <option value="Hunting">Hunting</option>
+          <option value="Work Weekend">Work Weekend</option>
+          <option value="Trout Weekend">Trout Weekend</option>
+        </select>
+
+        <button id="saveEventBtn">Save Event</button>
+        <button id="cancelEventBtn">Cancel</button>
+      </div>
+    </div>
+
+    <h2>Journal Entries</h2>
+    <button id="saveJournalBtn">Add Entry</button>
+    <ul id="journalList"></ul>
+
+    <h2>Photo Upload</h2>
+    <input type="file" id="photoUpload" accept="image/*" />
+    <button id="uploadPhotoBtn">Upload</button>
+    <div id="photoGallery"></div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
