@@ -28,7 +28,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// If your Firestore rules require request.auth != null:
+// Firestore rules require request.auth != null:
 const auth = getAuth(app);
 signInAnonymously(auth)
   .then(() => console.log("Signed in anonymously!"))
@@ -208,7 +208,7 @@ async function loadEvents() {
 /********************************************
  * 7. Firestore: Journal Entries
  ********************************************/
-// Instead of just reading from the textarea, we'll prompt for three fields:
+// Prompt for three fields:
 saveJournalBtn.addEventListener("click", async () => {
   // 1) Prompt for name
   const userName = prompt("Enter your name:");
@@ -223,7 +223,7 @@ saveJournalBtn.addEventListener("click", async () => {
   if (!journalText) return;
 
   try {
-    // Save to Firestore (assuming your collection is "journalEntries")
+    // Save to Firestore
     await addDoc(collection(db, "journalEntries"), {
       name: userName,
       visitDate: dateOfVisit,
@@ -237,7 +237,7 @@ saveJournalBtn.addEventListener("click", async () => {
   }
 });
 
-// We'll display them using loadJournalEntries() below
+// Display them
 async function loadJournalEntries() {
   journalList.innerHTML = "";
 
