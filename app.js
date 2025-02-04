@@ -125,31 +125,48 @@ nextBtn.addEventListener("click", () => {
 /********************************************
  * 5. Firestore: Add Event (Multiple Prompts)
  ********************************************/
-async function addEvent(day) {
-  const eventName = prompt("Enter the event name:");
-  if (!eventName) return; // Cancel if user hits Esc or doesn't enter a name
+const eventTypes = {
+  "Open": "",
+  "Family Time": "green",
+  "Family Time but open to visitors": "yellow",
+  "Golf Weekend": "red",
+  "Hunting": "orange",
+  "Work Weekend": "blue",
+  "Trout Weekend": "purple"
+};
 
-  const eventTime = prompt("Enter the event time (e.g., 2:00 PM):");
-  if (!eventTime) return;
+saveEventBtn.addEventListener("click", async () => {
+  const eventName = eventNameInput.value.trim();
+  const eventTime = eventTimeInput.value.trim();
+  const eventDesc = eventDescInput.value.trim();
+  const eventType = prompt("Enter event type: (Open, Family Time, Golf Weekend, etc.)");
+  const day = selectedDayInput.value;
 
-  const eventDesc = prompt("Enter a short description of the event:");
-  if (!eventDesc) return;
+  if (!eventName || !eventTime || !eventDesc || !eventType || !day) {
+    alert("Please fill in all fields!");
+    return;
+  }
 
   try {
     await addDoc(collection(db, "events"), {
       name: eventName,
       time: eventTime,
       description: eventDesc,
+      type: eventType, // Save the type
+      color: eventTypes[eventType] || "", // Assign color if valid type
       year: currentYear,
       month: currentMonth,
-      day: day,
+      day: parseInt(day, 10),
       timestamp: serverTimestamp()
     });
-    loadEvents(); // Refresh the list after adding
+
+    addEventModal.classList.add("hidden");
+    loadEvents();
+    renderCalendar(); // Refresh calendar
   } catch (err) {
-    console.error("Error adding event:", err);
+    console.error("Error saving event:", err);
   }
-}
+});
 
 /********************************************
  * 6. Firestore: Load Events
@@ -238,7 +255,7 @@ async function loadJournalEntries() {
 
 /********************************************
  * 8. Photo Upload (Local Browser Display)
- ********************************************/
+
 uploadPhotoBtn.addEventListener("click", () => {
   const file = photoUpload.files[0];
   if (!file) return;
@@ -251,3 +268,4 @@ uploadPhotoBtn.addEventListener("click", () => {
   };
   reader.readAsDataURL(file);
 });
+ ********************************************/
