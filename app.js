@@ -79,26 +79,36 @@ loginBtn.addEventListener("click", () => {
 /********************************************
  * 4. Calendar Rendering
  ********************************************/
-function renderCalendar() {
+function renderCalendar(eventsByDate = {}) {
   monthNameEl.textContent = `${monthNames[currentMonth]} ${currentYear}`;
   calendarGrid.innerHTML = "";
 
   let firstDay = new Date(currentYear, currentMonth, 1).getDay();
   let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-  // Add empty cells for offset
   for (let i = 0; i < firstDay; i++) {
     const emptyCell = document.createElement("div");
     emptyCell.classList.add("empty-cell");
     calendarGrid.appendChild(emptyCell);
   }
 
-  // Create day cells
   for (let day = 1; day <= daysInMonth; day++) {
     const dayElement = document.createElement("div");
-    dayElement.textContent = day;
     dayElement.classList.add("calendar-day");
-    dayElement.onclick = () => addEvent(day); // Use multiple prompts
+    dayElement.textContent = day;
+    dayElement.onclick = () => showAddEventModal(day);
+
+    const key = `${currentYear}-${currentMonth}-${day}`;
+    if (eventsByDate[key]) {
+      eventsByDate[key].forEach(event => {
+        const eventDiv = document.createElement("div");
+        eventDiv.textContent = event.name;
+        eventDiv.classList.add("event-item");
+        if (event.color) eventDiv.style.backgroundColor = event.color;
+        dayElement.appendChild(eventDiv);
+      });
+    }
+
     calendarGrid.appendChild(dayElement);
   }
 }
