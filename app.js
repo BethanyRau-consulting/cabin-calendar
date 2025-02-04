@@ -96,7 +96,7 @@ function renderCalendar(eventsByDate = {}) {
     const dayElement = document.createElement("div");
     dayElement.classList.add("calendar-day");
     dayElement.textContent = day;
-    dayElement.onclick = () => showAddEventModal(day);
+    dayElement.onclick = () => showAddEventModal(day); // Open modal
 
     const key = `${currentYear}-${currentMonth}-${day}`;
     if (eventsByDate[key]) {
@@ -112,7 +112,6 @@ function renderCalendar(eventsByDate = {}) {
     calendarGrid.appendChild(dayElement);
   }
 }
-
 // Month navigation
 prevBtn.addEventListener("click", () => {
   currentMonth--;
@@ -135,6 +134,21 @@ nextBtn.addEventListener("click", () => {
 /********************************************
  * 5. Firestore: Add Event (Multiple Prompts)
  ********************************************/
+function showAddEventModal(day) {
+  selectedDayInput.value = day;  // Store the clicked day
+  eventNameInput.value = "";
+  eventTimeInput.value = "";
+  eventDescInput.value = "";
+  eventTypeInput.value = "Open"; // Default
+
+  addEventModal.classList.remove("hidden"); // Show modal
+}
+
+// Close modal when clicking "Cancel"
+cancelEventBtn.addEventListener("click", () => {
+  addEventModal.classList.add("hidden");
+});
+
 const eventTypes = {
   "Open": "",
   "Family Time": "green",
@@ -145,11 +159,22 @@ const eventTypes = {
   "Trout Weekend": "purple"
 };
 
+// Get event modal elements
+const addEventModal = document.getElementById("addEventModal");
+const selectedDayInput = document.getElementById("selectedDay");
+const eventNameInput = document.getElementById("eventName");
+const eventTimeInput = document.getElementById("eventTime");
+const eventDescInput = document.getElementById("eventDesc");
+const eventTypeInput = document.getElementById("eventType");
+const saveEventBtn = document.getElementById("saveEventBtn");
+const cancelEventBtn = document.getElementById("cancelEventBtn");
+
+// Save event to Firestore when "Save Event" button is clicked
 saveEventBtn.addEventListener("click", async () => {
   const eventName = eventNameInput.value.trim();
   const eventTime = eventTimeInput.value.trim();
   const eventDesc = eventDescInput.value.trim();
-  const eventType = prompt("Enter event type: (Open, Family Time, Golf Weekend, etc.)");
+  const eventType = eventTypeInput.value;
   const day = selectedDayInput.value;
 
   if (!eventName || !eventTime || !eventDesc || !eventType || !day) {
@@ -162,7 +187,7 @@ saveEventBtn.addEventListener("click", async () => {
       name: eventName,
       time: eventTime,
       description: eventDesc,
-      type: eventType, // Save the type
+      type: eventType, // Save event type
       color: eventTypes[eventType] || "", // Assign color if valid type
       year: currentYear,
       month: currentMonth,
@@ -170,8 +195,8 @@ saveEventBtn.addEventListener("click", async () => {
       timestamp: serverTimestamp()
     });
 
-    addEventModal.classList.add("hidden");
-    loadEvents();
+    addEventModal.classList.add("hidden"); // Hide modal after saving
+    loadEvents(); // Reload events to reflect changes
     renderCalendar(); // Refresh calendar
   } catch (err) {
     console.error("Error saving event:", err);
