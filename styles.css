@@ -113,11 +113,34 @@ button {
 }
 
 /* --------------------------
+   Event Color Styles
+---------------------------- */
+.event-item {
+  padding: 4px;
+  margin: 2px 0;
+  font-size: 12px;
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.event-item.green { background-color: green; }
+.event-item.yellow { background-color: yellow; color: black; }
+.event-item.red { background-color: red; }
+.event-item.orange { background-color: orange; }
+.event-item.blue { background-color: blue; }
+.event-item.purple { background-color: purple; }
+
+/* --------------------------
    Photo Gallery
--------------------------- */
+
 .uploaded-photo {
   max-width: 100px;
   border-radius: 5px;
   margin: 5px;
   display: inline-block;
 }
+-------------------------- */
