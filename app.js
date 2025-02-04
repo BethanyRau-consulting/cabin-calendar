@@ -217,3 +217,14 @@ document.addEventListener("DOMContentLoaded", function () {
     renderCalendar(eventsByDate);
   }
 });
+
+  async function loadJounralEntries() {
+    const snapshot = await getDocs(query(collection(db, "journalEntries"). orderBy("timestamp", "desc")));
+    const entriesByDate = {};
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const key = `${data.year}-${data.month}-${data.day}`;
+      if (!journalEntriesByDate[key]) journalEntriesByDate[key] = [];
+      journalEntriesByDate[key].push(data)
+    });
