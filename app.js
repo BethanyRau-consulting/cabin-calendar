@@ -98,40 +98,40 @@ document.addEventListener("DOMContentLoaded", function () {
   /********************************************
    * 4. Calendar Rendering
    ********************************************/
-  function renderCalendar(eventsByDate = {}) {
-    monthNameEl.textContent = `${monthNames[currentMonth]} ${currentYear}`;
-    calendarGrid.innerHTML = "";
+function renderCalendar(eventsByDate = {}) {
+  monthNameEl.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+  calendarGrid.innerHTML = "";
 
-    let firstDay = new Date(currentYear, currentMonth, 1).getDay();
-    let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  let firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-    for (let i = 0; i < firstDay; i++) {
-      const emptyCell = document.createElement("div");
-      emptyCell.classList.add("empty-cell");
-      calendarGrid.appendChild(emptyCell);
-    }
+  for (let i = 0; i < firstDay; i++) {
+    const emptyCell = document.createElement("div");
+    emptyCell.classList.add("empty-cell");
+    calendarGrid.appendChild(emptyCell);
   }
 
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dayElement = document.createElement("div");
-      dayElement.classList.add("calendar-day");
-      dayElement.textContent = day;
-      dayElement.onclick = () => showAddEventModal(day); // Open modal
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayElement = document.createElement("div");
+    dayElement.classList.add("calendar-day");
+    dayElement.textContent = day;
+    dayElement.onclick = () => showAddEventModal(day); // Open modal
 
-      const key = `${currentYear}-${currentMonth}-${day}`;
-      if (eventsByDate[key]) {
-        eventsByDate[key].forEach(event => {
-          const eventDiv = document.createElement("div");
-          eventDiv.textContent = event.name;
-          eventDiv.classList.add("event-item");
-          if (event.color) eventDiv.style.backgroundColor = event.color;
-          dayElement.appendChild(eventDiv);
-        });
-      }
-
-      calendarGrid.appendChild(dayElement);
+    const key = `${currentYear}-${currentMonth}-${day}`;
+    if (eventsByDate[key]) {
+      eventsByDate[key].forEach(event => {
+        const eventDiv = document.createElement("div");
+        eventDiv.textContent = event.name;
+        eventDiv.classList.add("event-item");
+        if (event.color) eventDiv.style.backgroundColor = event.color;
+        dayElement.appendChild(eventDiv);
+      });
     }
+
+    calendarGrid.appendChild(dayElement);
   }
+} 
+
 
   prevBtn.addEventListener("click", () => {
     currentMonth--;
