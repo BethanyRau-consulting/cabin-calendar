@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
    * 4. Calendar Rendering
    ********************************************/
   function renderCalendar(eventsByDate = {}) {
-    monthNameEl.textContent = ${monthNames[currentMonth]} ${currentYear};
+    monthNameEl.textContent = `${monthNames[currentMonth]} ${currentYear}`;
     calendarGrid.innerHTML = "";
 
     let firstDay = new Date(currentYear, currentMonth, 1).getDay();
