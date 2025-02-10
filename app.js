@@ -1,5 +1,4 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-
 import {
   getFirestore,
   collection,
@@ -100,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
    * 4. Calendar Rendering
    ********************************************/
   function renderCalendar(eventsByDate = {}) {
-    monthNameEl.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+    monthNameEl.textContent = ${monthNames[currentMonth]} ${currentYear};
     calendarGrid.innerHTML = "";
 
     let firstDay = new Date(currentYear, currentMonth, 1).getDay();
@@ -118,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
       dayElement.textContent = day;
       dayElement.onclick = () => showAddEventModal(day); // Open modal
 
-      const key = `${currentYear}-${currentMonth}-${day}`;
+      const key = ${currentYear}-${currentMonth}-${day};
       if (eventsByDate[key]) {
         eventsByDate[key].forEach(event => {
           const eventDiv = document.createElement("div");
@@ -210,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      const key = `${data.year}-${data.month}-${data.day}`;
+      const key = ${data.year}-${data.month}-${data.day};
       if (!eventsByDate[key]) eventsByDate[key] = [];
       eventsByDate[key].push(data);
     });
@@ -218,4 +217,3 @@ document.addEventListener("DOMContentLoaded", function () {
     renderCalendar(eventsByDate);
   }
 });
-
