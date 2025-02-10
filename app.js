@@ -1,4 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+import { onSnapshot } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+
 import {
   getFirestore,
   collection,
@@ -203,17 +204,17 @@ document.addEventListener("DOMContentLoaded", function () {
   /********************************************
    * 6. Firestore: Load Events
    ********************************************/
-  async function loadEvents() {
-    const snapshot = await getDocs(query(collection(db, "events"), orderBy("timestamp", "desc")));
-    const eventsByDate = {};
+function loadEvents() {
+  const q = query(collection(db, "events"), orderBy("timestamp", "desc"));
 
+  onSnapshot(q, (snapshot) => {
+    const eventsByDate = {};
     snapshot.forEach(doc => {
       const data = doc.data();
       const key = `${data.year}-${data.month}-${data.day}`;
       if (!eventsByDate[key]) eventsByDate[key] = [];
       eventsByDate[key].push(data);
     });
-
     renderCalendar(eventsByDate);
-  }
-});
+  });
+}
