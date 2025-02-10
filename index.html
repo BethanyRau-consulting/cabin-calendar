@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cabin Time-Share Calendar</title>
-  <!-- Link to external CSS file -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
   <!-- Simple Password Login -->
   <div id="loginPage">
     <h2>Family Login</h2>
@@ -24,65 +24,65 @@
       <button id="nextBtn">Next</button>
     </div>
 
-    <!-- Days of the week row -->
+    <!-- Days of the week -->
     <div id="weekDays">
-      <div>Sun</div>
-      <div>Mon</div>
-      <div>Tues</div>
-      <div>Wed</div>
-      <div>Thurs</div>
-      <div>Fri</div>
-      <div>Sat</div>
+      <div>Sun</div><div>Mon</div><div>Tues</div><div>Wed</div><div>Thurs</div><div>Fri</div><div>Sat</div>
     </div>
 
-    <!-- Main calendar grid -->
+    <!-- Calendar grid -->
     <div id="calendarGrid"></div>
 
     <h2>Events</h2>
     <ul id="eventList"></ul>
 
-    <!-- MODAL for adding an Event -->
-<div id="addEventModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Add Event</h2>
-    
-    <label for="eventName">Event Name:</label>
-    <input type="text" id="eventName" />
+    <!-- Event Modal -->
+    <div id="addEventModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Add Event</h2>
 
-    <label for="eventTime">Event Time:</label>
-    <input type="text" id="eventTime" placeholder="e.g., 2:00 PM" />
+        <label for="eventName">Event Name:</label>
+        <input type="text" id="eventName" />
 
-    <label for="eventDesc">Description:</label>
-    <textarea id="eventDesc"></textarea>
+        <label for="eventTime">Event Time:</label>
+        <input type="text" id="eventTime" placeholder="e.g., 5:00 PM" />
 
-    <label for="eventType">Event Type:</label>
-    <select id="eventType">
-      <option value="Open">Open</option>
-      <option value="Family Time">Family Time</option>
-      <option value="Family Time but open to visitors">Family Time but open to visitors</option>
-      <option value="Golf Weekend">Golf Weekend</option>
-      <option value="Hunting">Hunting</option>
-      <option value="Work Weekend">Work Weekend</option>
-      <option value="Trout Weekend">Trout Weekend</option>
-    </select>
+        <label for="eventStartDate">Start Date:</label>
+        <input type="date" id="eventStartDate" />
 
-    <button id="saveEventBtn">Save Event</button>
-    <button id="cancelEventBtn">Cancel</button>
+        <label for="eventEndDate">End Date:</label>
+        <input type="date" id="eventEndDate" />
+
+        <label for="eventDesc">Description:</label>
+        <textarea id="eventDesc"></textarea>
+
+        <label for="eventType">Event Type:</label>
+        <select id="eventType">
+          <option value="Open">No Color (Open)</option>
+          <option value="Family Time">Green – Family Time</option>
+          <option value="Family Time but open to visitors">Yellow – Family Time but open to visitors</option>
+          <option value="Golf Weekend">Red – Golf Weekend</option>
+          <option value="Hunting">Orange – Hunting</option>
+          <option value="Work Weekend">Blue – Work Weekend</option>
+          <option value="Trout Weekend">Purple – Trout Weekend</option>
+        </select>
+
+        <button id="saveEventBtn">Save Event</button>
+        <button id="cancelEventBtn">Cancel</button>
+      </div>
+    </div>
+
+    <h2>Event Color Key:</h2>
+    <ul>
+      <li style="background-color: transparent;">No Color – Open</li>
+      <li style="background-color: green;">Green – Family Time</li>
+      <li style="background-color: yellow;">Yellow – Family Time but open to visitors</li>
+      <li style="background-color: red;">Red – Golf Weekend</li>
+      <li style="background-color: orange;">Orange – Hunting</li>
+      <li style="background-color: blue;">Blue – Work Weekend</li>
+      <li style="background-color: purple;">Purple – Trout Weekend</li>
+    </ul>
   </div>
-</div>
 
-    <h2>Journal Entries</h2>
-    <button id="saveJournalBtn">Add Entry</button>
-    <ul id="journalList"></ul>
-
-    <!--
-    <h2>Photo Uploads</h2>
-    <input type="file" id="photoUpload" accept="image/*" />
-    <button id="uploadPhotoBtn">Upload</button>
-    <div id="photoGallery"></div>
-  </div>
--->
-  <!-- Link to the external JavaScript file -->
   <script type="module" src="app.js"></script>
 </body>
 </html>
