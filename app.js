@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
       dayElement.textContent = day;
       dayElement.onclick = () => showAddEventModal(day); // Open modal
 
-      const key = ${currentYear}-${currentMonth}-${day};
+      const key = `${currentYear}-${currentMonth}-${day}`;
       if (eventsByDate[key]) {
         eventsByDate[key].forEach(event => {
           const eventDiv = document.createElement("div");
