@@ -204,17 +204,18 @@ document.addEventListener("DOMContentLoaded", function () {
   /********************************************
    * 6. Firestore: Load Events
    ********************************************/
-function loadEvents() {
-  const q = query(collection(db, "events"), orderBy("timestamp", "desc"));
-
-  onSnapshot(q, (snapshot) => {
+  async function loadEvents() {
+    const snapshot = await getDocs(query(collection(db, "events"), orderBy("timestamp", "desc")));
     const eventsByDate = {};
+
     snapshot.forEach(doc => {
       const data = doc.data();
       const key = `${data.year}-${data.month}-${data.day}`;
       if (!eventsByDate[key]) eventsByDate[key] = [];
       eventsByDate[key].push(data);
     });
+
     renderCalendar(eventsByDate);
-  });
-}
+  }
+});
+
