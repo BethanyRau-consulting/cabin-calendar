@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       calendarGrid.appendChild(dayElement);
     }
-  )}
+  }
 
   prevBtn.addEventListener("click", () => {
     currentMonth--;
