@@ -147,9 +147,9 @@ document.addEventListener("DOMContentLoaded", function () {
     addEventModal.classList.remove("hidden");
   }
 
-  cancelEventBtn.addEventListener("click", () => {
-    addEventModal.classList.add("hidden");
-  });
+cancelEventBtn.addEventListener("click", () => {
+  addEventModal.classList.add("hidden");
+});
 
   /********************************************
    * 6. Save Event to Firestore
