@@ -109,7 +109,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const emptyCell = document.createElement("div");
       emptyCell.classList.add("empty-cell");
       calendarGrid.appendChild(emptyCell);
-    }}
+    }
+  }
 
     for (let day = 1; day <= daysInMonth; day++) {
       const dayElement = document.createElement("div");
