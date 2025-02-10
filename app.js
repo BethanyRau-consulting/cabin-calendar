@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      const key = ${data.year}-${data.month}-${data.day};
+      const key = `${data.year}-${data.month}-${data.day}`;
       if (!eventsByDate[key]) eventsByDate[key] = [];
       eventsByDate[key].push(data);
     });
