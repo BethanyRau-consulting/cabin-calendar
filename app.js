@@ -27,15 +27,15 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 // Firestore rules require request.auth != null:
-const auth = getAuth(app);
 signInAnonymously(auth)
   .then(() => console.log("Signed in anonymously!"))
   .catch(err => console.error("Error signing in anonymously:", err));
 
 /********************************************
- * 2. Variables & DOM Elements (Ensure they are accessed after the DOM is loaded)
+ * 2. Variables & DOM Elements
  ********************************************/
 document.addEventListener("DOMContentLoaded", function () {
   let currentMonth = new Date().getMonth();
@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", function () {
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  // HTML elements
   const loginPage      = document.getElementById("loginPage");
   const loginBtn       = document.getElementById("loginBtn");
   const calendarPage   = document.getElementById("calendarPage");
@@ -53,22 +52,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const prevBtn        = document.getElementById("prevBtn");
   const nextBtn        = document.getElementById("nextBtn");
   const calendarGrid   = document.getElementById("calendarGrid");
-  const eventList      = document.getElementById("eventList");
-  const journalEntryEl = document.getElementById("journalEntry");
-  const journalList    = document.getElementById("journalList");
-  const saveJournalBtn = document.getElementById("saveJournalBtn");
 
-  // Modal elements
   const addEventModal = document.getElementById("addEventModal");
-  const selectedDayInput = document.getElementById("selectedDay");
   const eventNameInput = document.getElementById("eventName");
   const eventTimeInput = document.getElementById("eventTime");
+  const eventStartDate = document.getElementById("eventStartDate");
+  const eventEndDate   = document.getElementById("eventEndDate");
   const eventDescInput = document.getElementById("eventDesc");
   const eventTypeInput = document.getElementById("eventType");
-  const saveEventBtn = document.getElementById("saveEventBtn");
+  const saveEventBtn   = document.getElementById("saveEventBtn");
   const cancelEventBtn = document.getElementById("cancelEventBtn");
 
-  // Event types and colors
   const eventTypes = {
     "Open": "",
     "Family Time": "green",
@@ -86,10 +80,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const enteredPass = document.getElementById("password").value;
     if (enteredPass === "password") {
       loginPage.style.display = "none";
-      calendarPage.style.display = "block";
+      calendarPage.classList.remove("hidden");
       renderCalendar();
       loadEvents();
-      loadJournalEntries(); // Now defined properly
     } else {
       alert("Incorrect password. Please try again.");
     }
@@ -115,15 +108,20 @@ document.addEventListener("DOMContentLoaded", function () {
       const dayElement = document.createElement("div");
       dayElement.classList.add("calendar-day");
       dayElement.textContent = day;
-      dayElement.onclick = () => showAddEventModal(day); // Open modal
+      dayElement.onclick = () => showAddEventModal(day);
 
-      const key = `${currentYear}-${currentMonth}-${day}`;
+      const key = `${currentYear}-${currentMonth + 1}-${day}`;
       if (eventsByDate[key]) {
         eventsByDate[key].forEach(event => {
           const eventDiv = document.createElement("div");
-          eventDiv.textContent = event.name;
+          eventDiv.textContent = `${event.name} at ${event.time}`;
           eventDiv.classList.add("event-item");
-          if (event.color) eventDiv.style.backgroundColor = event.color;
+
+          if (event.color) {
+            dayElement.style.backgroundColor = event.color;
+            eventDiv.style.backgroundColor = event.color;
+          }
+
           dayElement.appendChild(eventDiv);
         });
       }
@@ -132,50 +130,40 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  prevBtn.addEventListener("click", () => {
-    currentMonth--;
-    if (currentMonth < 0) {
-      currentMonth = 11;
-      currentYear--;
-    }
-    renderCalendar();
-  });
-
-  nextBtn.addEventListener("click", () => {
-    currentMonth++;
-    if (currentMonth > 11) {
-      currentMonth = 0;
-      currentYear++;
-    }
-    renderCalendar();
-  });
-
   /********************************************
-   * 5. Firestore: Add Event
+   * 5. Show Add Event Modal
    ********************************************/
   function showAddEventModal(day) {
-    selectedDayInput.value = day;
+    const selectedDate = new Date(currentYear, currentMonth, day);
+    const formattedDate = selectedDate.toISOString().split("T")[0];
+
+    eventStartDate.value = formattedDate;
+    eventEndDate.value = formattedDate;
     eventNameInput.value = "";
     eventTimeInput.value = "";
     eventDescInput.value = "";
     eventTypeInput.value = "Open";
 
-    addEventModal.classList.remove("hidden"); // Show modal
+    addEventModal.classList.remove("hidden");
   }
 
   cancelEventBtn.addEventListener("click", () => {
     addEventModal.classList.add("hidden");
   });
 
+  /********************************************
+   * 6. Save Event to Firestore
+   ********************************************/
   saveEventBtn.addEventListener("click", async () => {
     const eventName = eventNameInput.value.trim();
     const eventTime = eventTimeInput.value.trim();
     const eventDesc = eventDescInput.value.trim();
     const eventType = eventTypeInput.value;
-    const day = selectedDayInput.value;
+    const startDate = eventStartDate.value;
+    const endDate = eventEndDate.value;
 
-    if (!eventName || !eventTime || !eventDesc || !eventType || !day) {
-      alert("Please fill in all fields!");
+    if (!eventName || !eventTime || !startDate || !endDate) {
+      alert("Please fill in all required fields!");
       return;
     }
 
@@ -186,22 +174,20 @@ document.addEventListener("DOMContentLoaded", function () {
         description: eventDesc,
         type: eventType,
         color: eventTypes[eventType] || "",
-        year: currentYear,
-        month: currentMonth,
-        day: parseInt(day, 10),
+        startDate,
+        endDate,
         timestamp: serverTimestamp()
       });
 
       addEventModal.classList.add("hidden");
       loadEvents();
-      renderCalendar();
     } catch (err) {
       console.error("Error saving event:", err);
     }
   });
 
   /********************************************
-   * 6. Firestore: Load Events
+   * 7. Load Events from Firestore
    ********************************************/
   async function loadEvents() {
     const snapshot = await getDocs(query(collection(db, "events"), orderBy("timestamp", "desc")));
@@ -209,15 +195,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      const key = `${data.year}-${data.month}-${data.day}`;
-      if (!eventsByDate[key]) eventsByDate[key] = [];
-      eventsByDate[key].push(data);
+      let start = new Date(data.startDate);
+      let end = new Date(data.endDate);
+
+      while (start <= end) {
+        const key = start.toISOString().split("T")[0];
+        if (!eventsByDate[key]) eventsByDate[key] = [];
+        eventsByDate[key].push(data);
+        start.setDate(start.getDate() + 1);
+      }
     });
 
     renderCalendar(eventsByDate);
-  }
-
-  function loadJournalEntries() {
-    console.log("Loading journal entries... (Function not implemented yet)");
   }
 });
