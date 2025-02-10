@@ -1,6 +1,3 @@
-/* --------------------------
-   Global & Basic Elements
--------------------------- */
 body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f4;
@@ -9,8 +6,7 @@ body {
   padding: 0;
 }
 
-input,
-button {
+input, button {
   padding: 10px;
   margin: 10px;
   border: none;
@@ -23,22 +19,6 @@ button {
   cursor: pointer;
 }
 
-/* --------------------------
-   Login Page Overlay
--------------------------- */
-#loginPage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-}
-
-/* --------------------------
-   Calendar Container
--------------------------- */
 #calendarPage {
   max-width: 800px;
   margin: 40px auto;
@@ -46,45 +26,12 @@ button {
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  display: none; /* hidden until login */
 }
 
-/* Month controls */
-#calendarControls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-/* Days of the week header */
-#weekDays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  font-weight: bold;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  background-color: #eaeaea;
-  padding: 5px 0;
-}
-
-#weekDays > div {
-  border-right: 1px solid #ccc;
-}
-#weekDays > div:last-child {
-  border-right: none;
-}
-
-/* Calendar grid */
 #calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
-  margin-bottom: 20px;
-}
-
-.empty-cell {
-  background: transparent;
 }
 
 .calendar-day {
@@ -95,51 +42,6 @@ button {
   transition: background 0.3s;
 }
 
-.calendar-day:hover {
-  background: #5cb85c;
-  color: white;
-}
-
-/* --------------------------
-   Events & Journal Lists
--------------------------- */
-#eventList,
-#journalList {
-  list-style: none;
-  padding: 0;
-  text-align: left;
-  margin: 10px auto;
-  max-width: 600px;
-}
-
-/* --------------------------
-   Event Color Styles
----------------------------- */
-.event-item {
-  padding: 4px;
-  margin: 2px 0;
-  font-size: 12px;
-  color: white;
-  text-align: center;
-  border-radius: 5px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.event-item.green { background-color: green; }
-.event-item.yellow { background-color: yellow; color: black; }
-.event-item.red { background-color: red; }
-.event-item.orange { background-color: orange; }
-.event-item.blue { background-color: blue; }
-.event-item.purple { background-color: purple; }
-
-/* Hide modal by default */
-.hidden {
-  display: none !important;
-}
-
-/* Modal overlay */
 .modal {
   position: fixed;
   top: 0;
@@ -152,42 +54,9 @@ button {
   justify-content: center;
 }
 
-/* Modal box */
 .modal-content {
   background: #fff;
   padding: 20px;
   width: 300px;
-  max-width: 80%;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  position: relative;
 }
-
-/* Style buttons */
-.modal-content button {
-  margin-top: 10px;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-}
-
-.modal-content button:first-child {
-  background: green;
-  color: white;
-}
-
-.modal-content button:last-child {
-  background: red;
-  color: white;
-}
-
-/* --------------------------
-   Photo Gallery
-
-.uploaded-photo {
-  max-width: 100px;
-  border-radius: 5px;
-  margin: 5px;
-  display: inline-block;
-}
--------------------------- */
