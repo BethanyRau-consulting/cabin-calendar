@@ -133,23 +133,22 @@ loginBtn.addEventListener("click", () => {
   /********************************************
    * 5. Show Add Event Modal
    ********************************************/
-  function showAddEventModal(day) {
-    const selectedDate = new Date(currentYear, currentMonth, day);
-    const formattedDate = selectedDate.toISOString().split("T")[0];
+function showAddEventModal(day) {
+  // Ensure modal is only shown when a valid day is clicked
+  if (!day) return;
 
-    eventStartDate.value = formattedDate;
-    eventEndDate.value = formattedDate;
-    eventNameInput.value = "";
-    eventTimeInput.value = "";
-    eventDescInput.value = "";
-    eventTypeInput.value = "Open";
+  const selectedDate = new Date(currentYear, currentMonth, day);
+  const formattedDate = selectedDate.toISOString().split("T")[0];
 
-    addEventModal.classList.remove("hidden");
-  }
+  eventStartDate.value = formattedDate;
+  eventEndDate.value = formattedDate;
+  eventNameInput.value = "";
+  eventTimeInput.value = "";
+  eventDescInput.value = "";
+  eventTypeInput.value = "Open";
 
-cancelEventBtn.addEventListener("click", () => {
-  addEventModal.classList.add("hidden");
-});
+  addEventModal.classList.remove("hidden");
+}
 
   /********************************************
    * 6. Save Event to Firestore
