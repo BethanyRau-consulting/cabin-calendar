@@ -81,6 +81,7 @@ loginBtn.addEventListener("click", () => {
   if (enteredPass === "password") {
     loginPage.style.display = "none";
     calendarPage.style.display = "block";  // Make sure calendar is visible
+    calendarPage.style.visibility = "visible";
     renderCalendar();
     loadEvents();
   } else {
