@@ -25,6 +25,7 @@ button {
 
 #calendarPage {
   display: none;
+  visibility: hidden;
   max-width: 800px;
   margin: 40px auto;
   background: white;
