@@ -76,17 +76,17 @@ document.addEventListener("DOMContentLoaded", function () {
   /********************************************
    * 3. Login Logic (Simple Password)
    ********************************************/
-  loginBtn.addEventListener("click", () => {
-    const enteredPass = document.getElementById("password").value;
-    if (enteredPass === "password") {
-      loginPage.style.display = "none";
-      calendarPage.classList.remove("hidden");
-      renderCalendar();
-      loadEvents();
-    } else {
-      alert("Incorrect password. Please try again.");
-    }
-  });
+loginBtn.addEventListener("click", () => {
+  const enteredPass = document.getElementById("password").value;
+  if (enteredPass === "password") {
+    loginPage.style.display = "none";
+    calendarPage.style.display = "block";  // Make sure calendar is visible
+    renderCalendar();
+    loadEvents();
+  } else {
+    alert("Incorrect password. Please try again.");
+  }
+});
 
   /********************************************
    * 4. Calendar Rendering
